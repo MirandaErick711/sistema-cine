@@ -1,0 +1,284 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    background: #09090c;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+header {
+    height: 75px;
+    padding: 0 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #222;
+}
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+.logo span {
+    color: #e50914;
+}
+nav a {
+    color: #aaa;
+    text-decoration: none;
+    margin-left: 25px;
+}
+nav a:hover {
+    color: white;
+}
+.hero {
+    min-height: 430px;
+    display: flex;
+    align-items: center;
+    padding: 70px 10%;
+    background: linear-gradient(90deg, #09090c 30%, #29080a);
+}
+.hero h1 {
+    font-size: 58px;
+    margin: 15px 0;
+}
+.hero p {
+    color: #aaa;
+    max-width: 500px;
+    line-height: 1.6;
+}
+.rojo {
+    color: #e50914;
+    font-weight: bold;
+    letter-spacing: 3px;
+    font-size: 13px;
+}
+.boton {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #e50914;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+.boton:hover {
+    background: #b20710;
+}
+.seccion {
+    padding: 60px 8%;
+}
+.titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+.titulo form {
+    display: flex;
+}
+.titulo input {
+    padding: 12px;
+    width: 250px;
+    background: #17171c;
+    border: 1px solid #333;
+    color: white;
+}
+.titulo button {
+    padding: 12px 20px;
+    background: #e50914;
+    color: white;
+    border: 0;
+    cursor: pointer;
+}
+.peliculas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+.card {
+    background: #15151a;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: .3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.card img {
+    width: 100%;
+    height: 390px;
+    object-fit: cover;
+}
+.card-body {
+    padding: 20px;
+}
+.card h3 {
+    min-height: 50px;
+}
+.genero {
+    color: #e50914;
+    font-size: 13px;
+    font-weight: bold;
+}
+.acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+.btn-secundario {
+    padding: 12px 20px;
+    border: 1px solid #555;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.extra {
+    padding: 70px 8%;
+    background: #15151a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.extra-botones {
+    display: flex;
+    gap: 10px;
+}
+.extra-botones a {
+    padding: 12px 18px;
+    border: 1px solid #444;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.extra-botones a:hover {
+    border-color: #e50914;
+}
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+}
+.detalle {
+    width: 80%;
+    margin: 70px auto;
+    display: flex;
+    gap: 50px;
+    align-items: center;
+}
+.detalle img {
+    width: 300px;
+    height: 430px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.detalle-info {
+    max-width: 600px;
+}
+.detalle-info h1 {
+    font-size: 45px;
+}
+.horarios {
+    margin: 30px 0;
+}
+.horarios p {
+    color: #aaa;
+}
+.horarios a {
+    display: inline-block;
+    padding: 12px 18px;
+    margin-right: 8px;
+    background: #19191e;
+    color: white;
+    text-decoration: none;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+.horarios a:hover {
+    border-color: #e50914;
+}
+.compra {
+    width: 800px;
+    max-width: 90%;
+    margin: 60px auto;
+}
+.compra-info {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    margin-bottom: 35px;
+}
+.compra-info img {
+    width: 150px;
+    height: 210px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+.formulario {
+    background: #15151a;
+    padding: 30px;
+    border-radius: 8px;
+}
+.formulario input,
+.formulario select,
+.formulario textarea {
+    width: 100%;
+    padding: 13px;
+    margin: 8px 0 18px;
+    background: #222228;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 5px;
+}
+.formulario button {
+    width: 100%;
+    padding: 13px;
+    background: #e50914;
+    color: white;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.asientos {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.asientos label {
+    background: #222228;
+    padding: 12px;
+    border-radius: 5px;
+}
+.mensaje {
+    padding: 20px;
+    background: #15151a;
+    border-left: 4px solid #e50914;
+    margin-bottom: 25px;
+}
+.contacto-pagina {
+    width: 700px;
+    max-width: 90%;
+    margin: 70px auto;
+}
+.contacto-pagina h1 {
+    font-size: 40px;
+}
+@media(max-width:800px) {
+    .peliculas {
+        grid-template-columns: 1fr;
+    }
+    .titulo,
+    .extra {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 25px;
+    }
+    .detalle {
+        flex-direction: column;
+    }
+    nav {
+        display: none;
+    }
+}
