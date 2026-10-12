@@ -1,118 +1,82 @@
 <?php
-include "funciones.php";
+/**
+ * pelicula.php
+ * 
+ * Vista detallada de una pelicula seleccionada.
+ * Muestra sinopsis, duracion, precio, trailer y horarios/funciones disponibles
+ * desde la base de datos MySQL con enlaces directos para reservar.
+ */
+require_once "funciones.php";
 
-// GET: recibe el texto del buscador desde la URL.
-// Ejemplo: index.php?buscar=avengers
-$buscar = $_GET["buscar"] ?? "";
+$id = isset($_GET["id"]) ? (int)$_GET["id"] : 0;
+
+$peliculaModel = new Pelicula();
+$pelicula = $peliculaModel->obtenerPorId($id);
+
+// Si la pelicula no existe o esta inactiva, redirigir amigablemente a la cartelera
+if (!$pelicula || $pelicula['estado'] !== 'activa') {
+    header("Location: index.php#cartelera");
+    exit;
+}
+
+// Obtener las funciones disponibles para esta pelicula
+$funcionModel = new Funcion();
+$funciones = $funcionModel->obtenerPorPelicula($id);
+
+$usuario = usuarioActual();
+$tituloPagina = $pelicula["titulo"];
+$paginaActiva = "cartelera";
+
+include "includes/header.php";
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Cine UNS</title>
-    <link rel="stylesheet" href="estilos.css">
-</head>
+<section class="detalle">
+    <img src="<?= e($pelicula["imagen"]) ?>" alt="<?= e($pelicula["titulo"]) ?>">
+    <div class="detalle-info">
+        <span class="genero"><?= e($pelicula["genero"]) ?></span>
+        <h1><?= e($pelicula["titulo"]) ?></h1>
+        <p style="color: #aaa; margin: 10px 0 20px;">
+            <strong>Duracion:</strong> <?= e($pelicula["duracion"]) ?> &nbsp;|&nbsp; 
+            <strong>Precio:</strong> S/ <?= number_format($pelicula["precio"], 2) ?>
+        </p>
 
-<body>
-<header>
-    <div class="logo">
-        CINE<span>UNS</span>
-    </div>
-    <nav>
-        <a href="index.php">Inicio</a>
-        <a href="#cartelera">Cartelera</a>
-        <a href="contact.php">Contacto</a>
-    </nav>
-</header>
+        <?php if (!empty($pelicula["sinopsis"])): ?>
+            <p style="line-height: 1.7; color: #ccc; margin-bottom: 25px;">
+                <?= nl2br(e($pelicula["sinopsis"])) ?>
+            </p>
+        <?php endif; ?>
 
-<section class="hero">
-    <div>
-        <p class="rojo">CINE UNS</p>
-        <h1>Tu pelicula<br>Tu Momento</h1>
-        <p>Descubre nuestra cartelera y disfruta
-            de las mejores historias.</p>
-        <a href="#cartelera" class="boton">Ver cartelera</a>
-    </div>
-</section>
+        <?php if (!empty($pelicula["trailer"])): ?>
+            <p style="margin-bottom: 25px;">
+                <a href="<?= e($pelicula["trailer"]) ?>" target="_blank" rel="noopener noreferrer" class="btn-secundario" style="display: inline-flex; align-items: center; gap: 8px;">
+                    ▶ Ver Trailer Oficial
+                </a>
+            </p>
+        <?php endif; ?>
 
-<section class="seccion" id="cartelera">
-    <div class="titulo">
-        <div>
-            <p class="rojo">AHORA EN CARTELERA</p>
-            <h2>Peliculas</h2>
+        <div class="horarios">
+            <h3>Horarios y Funciones Disponibles</h3>
+            <p style="margin-bottom: 15px;">Selecciona un horario para reservar tus entradas:</p>
+
+            <?php if (empty($funciones)): ?>
+                <p style="color: #888;">No hay funciones programadas para esta pelicula en este momento.</p>
+            <?php else: ?>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <?php foreach ($funciones as $f): ?>
+                        <a href="compra.php?id=<?= (int)$pelicula["id"] ?>&funcion_id=<?= (int)$f["id"] ?>" title="<?= e($f["sala"]) ?> - <?= e($f["fecha"]) ?>">
+                            <strong><?= substr(e($f["hora"]), 0, 5) ?></strong>
+                            <small style="display: block; font-size: 11px; color: #888;"><?= e($f["sala"]) ?> (<?= e($f["fecha"]) ?>)</small>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
 
-        <!-- GET: envia la busqueda mediante la URL. -->
-        <form method="GET">
-            <input
-                type="text"
-                name="buscar"
-                placeholder="Buscar pelicula..."
-                value="<?= htmlspecialchars($buscar) ?>"
-            >
-            <button type="submit">Buscar</button>
-        </form>
-    </div>
-
-    <div class="peliculas">
-        <?php foreach ($peliculas as $id => $pelicula): ?>
-            <?php
-            // Filtra las peliculas segun lo escrito en el buscador.
-            if (
-                $buscar != "" &&
-                stripos($pelicula["titulo"], $buscar) === false
-            ) {
-                continue;
-            }
-            ?>
-
-            <article class="card">
-                <img src="<?= $pelicula["imagen"] ?>">
-                <div class="card-body">
-                    <span class="genero"><?= $pelicula["genero"] ?></span>
-                    <h3><?= $pelicula["titulo"] ?></h3>
-                    <p><?= $pelicula["duracion"] ?> · S/ <?= $pelicula["precio"] ?></p>
-
-                    <div class="acciones">
-                        <!-- GET: envia el ID a pelicula.php. -->
-                        <a
-                            href="pelicula.php?id=<?= $id ?>"
-                            class="btn-secundario"
-                        >
-                            Detalles
-                        </a>
-
-                        <!-- GET: envia el ID a compra.php. -->
-                        <a
-                            href="compra.php?id=<?= $id ?>"
-                            class="boton"
-                        >
-                            Comprar
-                        </a>
-                    </div>
-                </div>
-            </article>
-        <?php endforeach; ?>
+        <div class="acciones" style="margin-top: 30px;">
+            <a href="compra.php?id=<?= (int)$pelicula["id"] ?>" class="boton">Reservar Entrada</a>
+            <a href="index.php#cartelera" class="btn-secundario">Volver a Cartelera</a>
+        </div>
     </div>
 </section>
 
-<section class="extra">
-    <div>
-        <p class="rojo">EXPERIENCIA CINE UNS</p>
-        <h2>Mas que una pelicula.</h2>
-        <p>Revisa nuestra cartelera y comparte
-            tu experiencia.</p>
-    </div>
-
-    <div class="extra-botones">
-        <a href="#cartelera">Ver cartelera</a>
-        <a href="contact.php">Escribenos</a>
-    </div>
-</section>
-
-<footer>
-    CINE UNS · Proyecto PHP
-</footer>
-</body>
-</html>
+<?php include "includes/footer.php"; ?>

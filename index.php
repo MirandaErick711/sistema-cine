@@ -1,30 +1,25 @@
 <?php
-include "funciones.php";
+/**
+ * index.php
+ * 
+ * Pagina de inicio del Cine UNS.
+ * Consulta las peliculas activas directamente desde la base de datos MySQL (POO Pelicula).
+ * Mantiene intacto el diseño, estructura, clases CSS y elementos visuales originales.
+ */
+require_once "funciones.php";
 
-// GET: recibe lo que el usuario escribe en el buscador.
-// Ejemplo: index.php?buscar=avengers
 $buscar = $_GET["buscar"] ?? "";
+
+// Consultar peliculas activas desde la base de datos
+$peliculaModel = new Pelicula();
+$peliculas = $peliculaModel->obtenerActivas($buscar);
+
+$usuario = usuarioActual();
+$tituloPagina = "Inicio";
+$paginaActiva = "inicio";
+
+include "includes/header.php";
 ?>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Cine UNS</title>
-    <link rel="stylesheet" href="estilos.css">
-</head>
-
-<body>
-<header>
-    <div class="logo">
-        CINE<span>UNS</span>
-    </div>
-    <nav>
-        <a href="index.php">Inicio</a>
-        <a href="#cartelera">Cartelera</a>
-        <a href="contact.php">Contacto</a>
-    </nav>
-</header>
 
 <section class="hero">
     <div>
@@ -43,58 +38,53 @@ $buscar = $_GET["buscar"] ?? "";
             <h2>Peliculas</h2>
         </div>
 
-        <!-- GET: envia el texto del buscador mediante la URL. -->
-        <form method="GET">
+        <!-- Buscador con metodo GET conectado a base de datos -->
+        <form method="GET" action="index.php#cartelera">
             <input
                 type="text"
                 name="buscar"
                 placeholder="Buscar pelicula..."
-                value="<?= htmlspecialchars($buscar) ?>"
+                value="<?= e($buscar) ?>"
             >
             <button type="submit">Buscar</button>
         </form>
     </div>
 
     <div class="peliculas">
-        <?php foreach ($peliculas as $id => $pelicula): ?>
-            <?php
-            // Si se escribio una busqueda, comprobamos el titulo.
-            // stripos() busca el texto sin importar mayusculas/minusculas.
-            if (
-                $buscar != "" &&
-                stripos($pelicula["titulo"], $buscar) === false
-            ) {
-                continue;
-            }
-            ?>
+        <?php if (empty($peliculas)): ?>
+            <p style="grid-column: 1 / -1; color: #aaa; text-align: center; padding: 40px 0;">
+                No se encontraron peliculas disponibles en este momento.
+            </p>
+        <?php else: ?>
+            <?php foreach ($peliculas as $p): ?>
+                <article class="card">
+                    <img src="<?= e($p["imagen"]) ?>" alt="<?= e($p["titulo"]) ?>">
+                    <div class="card-body">
+                        <span class="genero"><?= e($p["genero"]) ?></span>
+                        <h3><?= e($p["titulo"]) ?></h3>
+                        <p><?= e($p["duracion"]) ?> · S/ <?= number_format($p["precio"], 2) ?></p>
 
-            <article class="card">
-                <img src="<?= $pelicula["imagen"] ?>">
-                <div class="card-body">
-                    <span class="genero"><?= $pelicula["genero"] ?></span>
-                    <h3><?= $pelicula["titulo"] ?></h3>
-                    <p><?= $pelicula["duracion"] ?> · S/ <?= $pelicula["precio"] ?></p>
+                        <div class="acciones">
+                            <!-- Enlace a los detalles de la pelicula -->
+                            <a
+                                href="pelicula.php?id=<?= (int)$p["id"] ?>"
+                                class="btn-secundario"
+                            >
+                                Detalles
+                            </a>
 
-                    <div class="acciones">
-                        <!-- GET: envia el ID de la pelicula mediante la URL. -->
-                        <a
-                            href="pelicula.php?id=<?= $id ?>"
-                            class="btn-secundario"
-                        >
-                            Detalles
-                        </a>
-
-                        <!-- GET: envia el ID a compra.php. -->
-                        <a
-                            href="compra.php?id=<?= $id ?>"
-                            class="boton"
-                        >
-                            Comprar
-                        </a>
+                            <!-- Enlace a la reserva/compra de entradas -->
+                            <a
+                                href="compra.php?id=<?= (int)$p["id"] ?>"
+                                class="boton"
+                            >
+                                Comprar
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </article>
-        <?php endforeach; ?>
+                </article>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -112,8 +102,4 @@ $buscar = $_GET["buscar"] ?? "";
     </div>
 </section>
 
-<footer>
-    CINE UNS · Proyecto PHP
-</footer>
-</body>
-</html>
+<?php include "includes/footer.php"; ?>
